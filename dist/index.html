@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnferComp - Redes Sociales y Salud</title>
+    <style>
+        :root {
+            --bg-color: #0b1120;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text: #f8fafc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        .app-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 22px;
+            padding: 22px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .header { text-align: center; margin-bottom: 16px; }
+        .badge-app {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 13px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            margin-bottom: 6px;
+        }
+        h1 { font-size: 20px; color: #ffffff; }
+        .image-frame {
+            width: 100%;
+            height: 150px;
+            background-color: #0f172a;
+            border-radius: 14px;
+            overflow: hidden;
+            margin: 12px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            transition: border-color 0.3s;
+        }
+        .image-frame img { width: 100%; height: 100%; object-fit: contain; background: #0f172a; }
+        .logo-frame {
+            width: 100%;
+            height: 140px;
+            background-color: #0f172a;
+            border-radius: 14px;
+            margin: 12px 0 6px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 6px;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+        .logo-frame img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .register-title {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 14px;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .score-pill { color: var(--accent); transition: transform 0.2s; }
+        .score-plus { color: var(--success) !important; transform: scale(1.15); }
+        .score-minus { color: var(--danger) !important; transform: scale(1.15); }
+        .timer-bar-bg { width: 100%; height: 8px; background: #334155; border-radius: 99px; overflow: hidden; margin-bottom: 14px; }
+        .timer-bar-fill { height: 100%; width: 100%; background: var(--accent); transition: width 1s linear, background-color 0.3s; }
+        .question-text { font-size: 15px; line-height: 1.4; margin-bottom: 14px; min-height: 58px; }
+        .options-grid { display: grid; gap: 8px; }
+        .btn {
+            background-color: #334155;
+            color: #ffffff;
+            border: none;
+            padding: 11px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .btn:hover { background-color: #475569; }
+        .btn.correct { background-color: var(--success) !important; color: #052e16; }
+        .btn.incorrect { background-color: var(--danger) !important; color: #ffffff; }
+        .btn-primary {
+            background-color: var(--accent);
+            color: #0f172a;
+            text-align: center;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .btn-primary:hover { background-color: #7dd3fc; }
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid #475569;
+            color: #cbd5e1;
+            text-align: center;
+            width: 100%;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 4px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: white;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        .feedback-box { margin-top: 10px; font-size: 13px; line-height: 1.35; min-height: 36px; font-weight: 500; }
+        .credits-card {
+            background: #0f172a;
+            padding: 14px;
+            border-radius: 12px;
+            margin-top: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            text-align: left;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .credits-card h3 { color: var(--accent); font-size: 13px; margin-bottom: 2px; margin-top: 6px; }
+        .credits-card h3:first-child { margin-top: 0; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="badge-app">EnferComp • Sesión 45 Minutos</div>
+        <h1>Redes Sociales e Impacto en la Salud</h1>
+    </div>
+
+    <!-- FORMULARIO OCULTO PARA NETLIFY FORMS -->
+    <form name="resultados-estudiantes" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="hidden">
+        <input type="hidden" name="form-name" value="resultados-estudiantes">
+        <input type="text" name="nombre" id="net-nombre">
+        <input type="text" name="apellidos" id="net-apellidos">
+        <input type="text" name="sexo" id="net-sexo">
+        <input type="text" name="carrera" id="net-carrera">
+        <input type="text" name="sede" id="net-sede">
+        <input type="text" name="puntaje" id="net-puntaje">
+        <input type="text" name="detalle" id="net-detalle">
+    </form>
+
+    <!-- PANTALLA DE REGISTRO -->
+    <div id="register-screen">
+        <div class="logo-frame">
+            <img src="https://i.ibb.co/0p9W5FMx/logo-22-removebg-preview.png" alt="Logotipo Enfermería y Salud Digital">
+        </div>
+        <div class="register-title">Registro de Estudiante</div>
+
+        <div class="form-group">
+            <label>Nombre:</label>
+            <input type="text" id="input-nombre" class="form-control" placeholder="Ej. Juan Carlos" required>
+        </div>
+        <div class="form-group">
+            <label>Apellidos:</label>
+            <input type="text" id="input-apellidos" class="form-control" placeholder="Ej. Pérez López" required>
+        </div>
+        <div class="form-group">
+            <label>Sexo:</label>
+            <select id="input-sexo" class="form-control">
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro / Prefiero no decirlo</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Carrera:</label>
+            <select id="input-carrera" class="form-control">
+                <option value="Enfermería">Enfermería</option>
+                <option value="Farmacia">Farmacia</option>
+                <option value="Bioanálisis">Bioanálisis</option>
+                <option value="Ingeniería Civil">Ingeniería Civil</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Sede:</label>
+            <select id="input-sede" class="form-control">
+                <option value="Condega">Condega</option>
+                <option value="Estelí">Estelí</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary" onclick="validateAndStart()">Comenzar Evaluación</button>
+        <button class="btn btn-secondary" onclick="toggleCredits()">👥 Ver Equipo y Tutores</button>
+
+        <div id="credits-panel" class="credits-card hidden">
+            <h3>Docente Tutor:</h3>
+            <p>Lic. Marvin Talavera</p>
+            <h3>Estudiantes Autores:</h3>
+            <ul style="padding-left: 16px;">
+                <li>SERRANO RIVERA MELBA JULISSA</li>
+                <li>TALAVERA CASTILLO MAYRA DE JESUS</li>
+                <li>TERCERO BELLORIN SAYDI MERCEDES</li>
+                <li>CRUZ MATEY CONY ANAHI</li>
+                <li>JOSSELING MARCELA CHAVARRIA IGLESIAS</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PANTALLA DEL JUEGO -->
+    <div id="quiz-screen" class="hidden">
+        <div class="stats-bar">
+            <span id="q-counter">Pregunta 1/10</span>
+            <span id="timer-text">⏱️ 15s</span>
+            <span id="score-display" class="score-pill">Puntaje: 0/100</span>
+        </div>
+
+        <div class="timer-bar-bg">
+            <div id="timer-bar" class="timer-bar-fill"></div>
+        </div>
+
+        <div class="image-frame" id="frame-container">
+            <img id="question-img" src="" alt="Imagen de la pregunta">
+        </div>
+
+        <div id="question-text" class="question-text"></div>
+        <div id="options-container" class="options-grid"></div>
+        <div id="feedback-box" class="feedback-box"></div>
+    </div>
+
+    <!-- PANTALLA FINAL -->
+    <div id="end-screen" class="hidden" style="text-align: center;">
+        <h2 id="end-title" style="margin-bottom: 8px; font-size: 20px;"></h2>
+        <div style="background: #0f172a; padding: 16px; border-radius: 14px; margin: 10px 0;">
+            <p style="font-size: 13px; color: #94a3b8;">Calificación Final</p>
+            <p id="final-score" style="font-size: 28px; font-weight: 800; color: var(--accent); margin: 4px 0;"></p>
+            <p id="final-details" style="font-size: 13px; color: #38bdf8; margin: 6px 0; font-weight: 600;"></p>
+            <p id="final-summary" style="font-size: 13px; color: #cbd5e1;"></p>
+        </div>
+        <p style="font-size: 12px; color: #22c55e; margin-bottom: 10px;">✔ Tus datos y resultados han sido registrados con éxito en línea.</p>
+        <button class="btn btn-primary" onclick="location.reload()">🔄 Reiniciar Evaluación</button>
+    </div>
+</div>
+
+<script>
+    const imgCorrectFeedback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150'><rect width='400' height='150' fill='%23052e16'/><circle cx='200' cy='55' r='24' fill='%2322c55e'/><path d='M189 55l7 7 14-14' fill='none' stroke='%230f172a' stroke-width='4' stroke-linecap='round'/><text x='200' y='110' fill='%2322c55e' font-family='sans-serif' font-size='14' font-weight='bold' text-anchor='middle'>¡CORRECTO! (+10 pts)</text></svg>";
+
+    const imgIncorrectFeedback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150'><rect width='400' height='150' fill='%23450a0a'/><circle cx='200' cy='55' r='24' fill='%23ef4444'/><path d='M189 44l22 22m0-22l-22 22' fill='none' stroke='%230f172a' stroke-width='4' stroke-linecap='round'/><text x='200' y='110' fill='%23ef4444' font-family='sans-serif' font-size='14' font-weight='bold' text-anchor='middle'>¡INCORRECTO! (0 pts)</text></svg>";
+
+    const questions = [
+        {
+            question: "1. ¿Cuál es el primer paso recomendado en la entrevista de confianza para pacientes con aislamiento físico?",
+            image: "https://i.ibb.co/C5cmCY2P/ni-os-que-juegan-preguntas-de-contestaci-n-del-juego-de-concurso-82352922.webp",
+            options: [
+                "Hablar sin juzgar sobre cómo utiliza su tiempo libre",
+                "Criticar fuertemente su uso de redes sociales",
+                "Aislarlo completamente de sus familiares"
+            ],
+            answer: 0,
+            explanation: "Correcto (+10 pts): Escuchar sin juzgar fomenta la confianza en la consulta clínica."
+        },
+        {
+            question: "2. Ante un paciente con ansiedad severa por pérdida de conexión a internet (Nomofobia), ¿qué se valora primero?",
+            image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Comprar un teléfono inteligente nuevo",
+                "Valorar signos vitales e indagar síntomas exactos",
+                "Dar de alta médica de inmediato"
+            ],
+            answer: 1,
+            explanation: "Correcto (+10 pts): Es indispensable revisar los signos vitales ante crisis de ansiedad."
+        },
+        {
+            question: "3. ¿Cómo se le denomina al hábito nocturno de desvelarse usando dispositivos móviles afectando el descanso?",
+            image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Vamping (uso nocturno de pantallas)",
+                "Insomnio cronológico natural",
+                "Síndrome de fatiga diurna"
+            ],
+            answer: 0,
+            explanation: "Correcto (+10 pts): El Vamping altera severamente el ciclo del sueño y la melatonina."
+        },
+        {
+            question: "4. En casos de trastornos mentales severos y del sueño, ¿qué rol cumple el entorno familiar?",
+            image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Dejar que el paciente resuelva solo su problema",
+                "Realizar acompañamiento y vigilancia estrecha",
+                "Prohibir la comunicación médica"
+            ],
+            answer: 1,
+            explanation: "Correcto (+10 pts): El acompañamiento familiar estrecho es clave en el tratamiento."
+        },
+        {
+            question: "5. ¿Qué actividad física se recomienda promover para contrarrestar el sedentarismo digital?",
+            image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Competencias de videojuegos en línea",
+                "Cualquier deporte al aire libre o actividad física de agrado",
+                "Ninguna, el reposo total es mejor"
+            ],
+            answer: 1,
+            explanation: "Correcto (+10 pts): El deporte al aire libre fomenta la socialización y la salud física."
+        },
+        {
+            question: "6. ¿Cuál es un signo físico común de la ansiedad generada por la desconexión digital?",
+            image: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Taquicardia, sudoración y desesperación",
+                "Aumento de la visión nocturna",
+                "Relajación muscular profunda"
+            ],
+            answer: 0,
+            explanation: "Correcto (+10 pts): La abstinencia digital puede activar síntomas físicos de pánico y ansiedad."
+        },
+        {
+            question: "7. ¿Qué aspecto ético y clínico debe mantener el personal de salud durante la intervención?",
+            image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Confidencialidad, empatía y respeto al paciente",
+                "Publicar el caso en redes sociales del hospital",
+                "Juzgar al paciente por sus hábitos virtuales"
+            ],
+            answer: 0,
+            explanation: "Correcto (+10 pts): La empatía y el respeto garantizan una atención en salud de calidad."
+        },
+        {
+            question: "8. ¿Cuándo se debe realizar una referencia a psicología o psiquiatría en estos casos?",
+            image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Cuando hay trastornos mentales severos o riesgo para el paciente",
+                "Nunca, enfermería puede tratar todo por sí sola",
+                "Solo si el paciente tiene un teléfono caro"
+            ],
+            answer: 0,
+            explanation: "Correcto (+10 pts): La derivación a especialistas es fundamental ante cuadros severos."
+        },
+        {
+            question: "9. ¿Qué medida preventiva se aconseja respecto al uso de pantallas antes de dormir?",
+            image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Apagar dispositivos al menos una hora antes de acostarse",
+                "Dejar el brillo al máximo en la oscuridad",
+                "Leer notificaciones hasta quedarse dormido"
+            ],
+            answer: 0,
+            explanation: "Correcto (+10 pts): Evitar pantallas antes de dormir mejora significativamente el descanso."
+        },
+        {
+            question: "10. ¿Por qué es importante el cumplimiento riguroso del tratamiento farmacológico prescrito?",
+            image: "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&w=600&q=80",
+            options: [
+                "Para estabilizar los trastornos severos bajo supervisión psiquiátrica",
+                "Para acelerar la adicción a internet",
+                "Para reemplazar la comunicación familiar"
+            ],
+            answer: 0,
+            explanation: "Correcto (+10 pts): El apego al tratamiento médico estabiliza la salud mental del paciente."
+        }
+    ];
+
+    let userData = { nombre: '', apellidos: '', sexo: '', carrera: '', sede: '' };
+    let currentIdx = 0;
+    let score = 0;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let timeLeft = 15;
+    let timerInterval = null;
+    let locked = false;
+
+    // AUDIO DE VIDEOJUEGO
+    function playTone(freqs, durations, type = 'sine') {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        let startTime = audioCtx.currentTime;
+        freqs.forEach((f, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(f, startTime);
+            gain.gain.setValueAtTime(0.18, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + durations[i]);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + durations[i]);
+            startTime += durations[i] * 0.85;
+        });
+    }
+
+    function soundCorrect() { playTone([523.25, 659.25], [0.12, 0.22], 'triangle'); }
+    function soundWrong() { playTone([220, 165], [0.18, 0.3], 'sawtooth'); }
+    function soundWinner() { playTone([523.25, 659.25, 783.99, 1046.5], [0.12, 0.12, 0.12, 0.4], 'triangle'); }
+    function soundLoser() { playTone([330, 293.66, 261.63, 196], [0.2, 0.2, 0.2, 0.45], 'sawtooth'); }
+
+    function toggleCredits() {
+        document.getElementById('credits-panel').classList.toggle('hidden');
+    }
+
+    function validateAndStart() {
+        const nom = document.getElementById('input-nombre').value.trim();
+        const ape = document.getElementById('input-apellidos').value.trim();
+
+        if(!nom || !ape) {
+            alert('Por favor complete su nombre y apellidos antes de comenzar.');
+            return;
+        }
+
+        userData.nombre = nom;
+        userData.apellidos = ape;
+        userData.sexo = document.getElementById('input-sexo').value;
+        userData.carrera = document.getElementById('input-carrera').value;
+        userData.sede = document.getElementById('input-sede').value;
+
+        document.getElementById('register-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        startGame();
+    }
+
+    function startGame() {
+        currentIdx = 0;
+        score = 0;
+        correctCount = 0;
+        incorrectCount = 0;
+        updateScoreUI(0);
+        loadQuestion();
+    }
+
+    function updateScoreUI(delta) {
+        const el = document.getElementById('score-display');
+        el.textContent = `Puntaje: ${score}/100`;
+        el.classList.remove('score-plus', 'score-minus');
+        if (delta > 0) el.classList.add('score-plus');
+        if (delta < 0) el.classList.add('score-minus');
+        setTimeout(() => el.classList.remove('score-plus', 'score-minus'), 400);
+    }
+
+    function loadQuestion() {
+        locked = false;
+        clearInterval(timerInterval);
+        timeLeft = 15;
+
+        const q = questions[currentIdx];
+        document.getElementById('q-counter').textContent = `Pregunta ${currentIdx + 1}/${questions.length}`;
+        document.getElementById('question-img').src = q.image;
+        document.getElementById('question-text').textContent = q.question;
+        document.getElementById('feedback-box').textContent = "";
+
+        const optionsDiv = document.getElementById('options-container');
+        optionsDiv.innerHTML = "";
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.textContent = opt;
+            btn.onclick = () => handleAnswer(index, btn);
+            optionsDiv.appendChild(btn);
+        });
+
+        startTimer();
+    }
+
+    function startTimer() {
+        const timerText = document.getElementById('timer-text');
+        const timerBar = document.getElementById('timer-bar');
+        timerText.textContent = `⏱️ ${timeLeft}s`;
+        timerBar.style.width = '100%';
+        timerBar.style.backgroundColor = 'var(--accent)';
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerText.textContent = `⏱️ ${timeLeft}s`;
+            timerBar.style.width = `${(timeLeft / 15) * 100}%`;
+
+            if (timeLeft <= 5) timerBar.style.backgroundColor = 'var(--danger)';
+            else if (timeLeft <= 9) timerBar.style.backgroundColor = 'var(--warning)';
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                handleTimeout();
+            }
+        }, 1000);
+    }
+
+    function handleTimeout() {
+        if (locked) return;
+        locked = true;
+        soundWrong();
+        incorrectCount++;
+        updateScoreUI(0);
+
+        document.getElementById('question-img').src = imgIncorrectFeedback;
+
+        const q = questions[currentIdx];
+        const buttons = document.getElementById('options-container').querySelectorAll('.btn');
+        buttons[q.answer].classList.add('correct');
+
+        const fb = document.getElementById('feedback-box');
+        fb.style.color = 'var(--danger)';
+        fb.textContent = `⏰ ¡Tiempo agotado! (0 pts). ${q.explanation}`;
+
+        setTimeout(nextStep, 2600);
+    }
+
+    function handleAnswer(selectedIndex, btnClicked) {
+        if (locked) return;
+        locked = true;
+        clearInterval(timerInterval);
+
+        const q = questions[currentIdx];
+        const buttons = document.getElementById('options-container').querySelectorAll('.btn');
+        const fb = document.getElementById('feedback-box');
+
+        if (selectedIndex === q.answer) {
+            btnClicked.classList.add('correct');
+            soundCorrect();
+            score += 10;
+            correctCount++;
+            updateScoreUI(10);
+            
+            document.getElementById('question-img').src = imgCorrectFeedback;
+
+            fb.style.color = 'var(--success)';
+            fb.textContent = q.explanation;
+        } else {
+            btnClicked.classList.add('incorrect');
+            buttons[q.answer].classList.add('correct');
+            soundWrong();
+            incorrectCount++;
+            updateScoreUI(0);
+
+            document.getElementById('question-img').src = imgIncorrectFeedback;
+
+            fb.style.color = 'var(--danger)';
+            fb.textContent = `Incorrecto (0 pts). La respuesta correcta estaba marcada en verde.`;
+        }
+
+        setTimeout(nextStep, 2600);
+    }
+
+    function nextStep() {
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            loadQuestion();
+        } else {
+            sendDataToNetlify();
+            showResults();
+        }
+    }
+
+    // ENVÍO EN LÍNEA A NETLIFY FORMS
+    function sendDataToNetlify() {
+        document.getElementById('net-nombre').value = userData.nombre;
+        document.getElementById('net-apellidos').value = userData.apellidos;
+        document.getElementById('net-sexo').value = userData.sexo;
+        document.getElementById('net-carrera').value = userData.carrera;
+        document.getElementById('net-sede').value = userData.sede;
+        document.getElementById('net-puntaje').value = score + " / 100 pts";
+        document.getElementById('net-detalle').value = `${correctCount} buenas, ${incorrectCount} malas`;
+
+        const formElement = document.querySelector('form[name="resultados-estudiantes"]');
+        const formData = new FormData(formElement);
+
+        fetch("/", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(formData).toString()
+        }).catch((error) => console.log("Error al enviar a Netlify:", error));
+    }
+
+    function showResults() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('end-screen').classList.remove('hidden');
+
+        const titleEl = document.getElementById('end-title');
+        const scoreEl = document.getElementById('final-score');
+        const detailsEl = document.getElementById('final-details');
+        const summaryEl = document.getElementById('final-summary');
+
+        scoreEl.textContent = `${score} / 100 Pts`;
+        detailsEl.textContent = `✅ Correctas: ${correctCount} | ❌ Incorrectas: ${incorrectCount}`;
+
+        if (score >= 70) {
+            soundWinner();
+            titleEl.textContent = `🏆 ¡Excelente, ${userData.nombre}!`;
+            titleEl.style.color = "var(--success)";
+            summaryEl.textContent = "¡Dominas a la perfección los protocolos de enfermería y salud mental!";
+        } else {
+            soundLoser();
+            titleEl.textContent = `📋 ¡Buen esfuerzo, ${userData.nombre}!`;
+            titleEl.style.color = "var(--danger)";
+            summaryEl.textContent = "Puedes repasar los conceptos de salud digital y volver a intentarlo.";
+        }
+    }
+</script>
+
+</body>
+</html>
